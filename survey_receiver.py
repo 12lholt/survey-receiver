@@ -20,18 +20,17 @@ def save_review(review_data, container_name):
 def main():
     st.title("Customer Review Submission")
 
-    # Get business_id and container_name from URL parameters, with default values
-    params = st.experimental_get_query_params()
-    business_id = params.get("business_id", ["MX001"])[0]  # Default business_id: MX001
-    container_name = params.get("container", ["bergstrom_test"])[0]  # Default container: bergstrom_test
+    # Get business_id, container_name, and location from URL parameters, with default values
+    business_id = st.query_params.get("business_id", "MX001")
+    container_name = st.query_params.get("container", "bergstrom_test")
+    location = st.query_params.get("location", "Unknown")
 
     st.write(f"Thank you for visiting {business_id}! We'd love to hear your feedback.")
 
     review_content = st.text_area("Please enter your review:")
-    location = st.text_input("Location:")
 
     if st.button("Submit Review"):
-        if review_content and location:
+        if review_content:
             review_data = {
                 "review_id": str(uuid.uuid4()),
                 "business_id": business_id,
@@ -46,10 +45,11 @@ def main():
                 st.write("Debug info (will be removed in production):")
                 st.write(f"Business ID: {business_id}")
                 st.write(f"Container Name: {container_name}")
+                st.write(f"Location: {location}")
             except Exception as e:
                 st.error(f"An error occurred while saving your review. Please try again later. Error: {str(e)}")
         else:
-            st.warning("Please fill in both the review and location fields.")
+            st.warning("Please enter your review before submitting.")
 
 if __name__ == "__main__":
     main()
