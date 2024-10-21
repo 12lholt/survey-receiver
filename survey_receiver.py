@@ -4,15 +4,22 @@ from datetime import datetime, timezone
 import os
 from azure.storage.blob import BlobServiceClient
 import json
+import random
+import string
 
 # Use an environment variable for the connection string
 connect_str = os.environ.get('AZURE_STORAGE_CONNECTION_STRING')
+
+def generate_random_filename(length=10):
+    return ''.join(random.choices(string.ascii_lowercase, k=length))
 
 def save_review(review_data, container_name):
     blob_service_client = BlobServiceClient.from_connection_string(connect_str)
     container_client = blob_service_client.get_container_client(container_name)
     
-    blob_name = f"{review_data['review_id']}.json"
+    # Generate a random filename
+    random_filename = generate_random_filename()
+    blob_name = f"{random_filename}.json"
     blob_client = container_client.get_blob_client(blob_name)
     
     blob_client.upload_blob(json.dumps(review_data), overwrite=True)
@@ -22,7 +29,7 @@ def main():
 
     # Get business_id, container_name, and location from URL parameters, with default values
     business_id = st.query_params.get("business_id", "MX001")
-    container_name = st.query_params.get("container", "bergstrom_test")
+    container_name = st.query_params.get("container", "bergstrom")
     location = st.query_params.get("location", "Austin")
 
     st.write(f"Thank you for visiting {business_id}! We'd love to hear your feedback.")
