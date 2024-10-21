@@ -23,7 +23,7 @@ def main():
     # Get business_id, container_name, and location from URL parameters, with default values
     business_id = st.query_params.get("business_id", "MX001")
     container_name = st.query_params.get("container", "bergstrom_test")
-    location = st.query_params.get("location", "Unknown")
+    location = st.query_params.get("location", "Austin")
 
     st.write(f"Thank you for visiting {business_id}! We'd love to hear your feedback.")
 
