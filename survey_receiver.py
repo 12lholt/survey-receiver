@@ -5,7 +5,7 @@ import os
 from azure.storage.blob import BlobServiceClient
 import json
 
-# Instead, use an environment variable
+# Use an environment variable for the connection string
 connect_str = os.environ.get('AZURE_STORAGE_CONNECTION_STRING')
 
 def save_review(review_data, container_name):
@@ -20,14 +20,10 @@ def save_review(review_data, container_name):
 def main():
     st.title("Customer Review Submission")
 
-    # Get business_id and container_name from URL parameters
+    # Get business_id and container_name from URL parameters, with default values
     params = st.experimental_get_query_params()
-    business_id = params.get("business_id", [""])[0]
-    container_name = params.get("container", [""])[0]
-
-    if not business_id or not container_name:
-        st.error("Missing business ID or container name. Please scan a valid QR code.")
-        return
+    business_id = params.get("business_id", ["MX001"])[0]  # Default business_id: MX001
+    container_name = params.get("container", ["bergstrom_test"])[0]  # Default container: bergstrom_test
 
     st.write(f"Thank you for visiting {business_id}! We'd love to hear your feedback.")
 
@@ -47,6 +43,9 @@ def main():
             try:
                 save_review(review_data, container_name)
                 st.success("Thank you for your review! It has been submitted successfully.")
+                st.write("Debug info (will be removed in production):")
+                st.write(f"Business ID: {business_id}")
+                st.write(f"Container Name: {container_name}")
             except Exception as e:
                 st.error(f"An error occurred while saving your review. Please try again later. Error: {str(e)}")
         else:
